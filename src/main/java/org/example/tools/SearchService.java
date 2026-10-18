@@ -1,8 +1,10 @@
 package org.example.tools;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.example.config.ResearchProperties;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -24,11 +26,14 @@ public class SearchService {
     }
 
     private final String apiKey;
+    private final int retries;
     private final RestClient client;
 
-    public SearchService(org.example.config.ResearchProperties properties) {
+    public SearchService(ResearchProperties properties, ClientHttpRequestFactory requestFactory) {
         this.apiKey = properties.tavilyApiKey();
+        this.retries = properties.effectiveHttp().retries();
         this.client = RestClient.builder()
+                .requestFactory(requestFactory)
                 .baseUrl("https://api.tavily.com")
                 .build();
     }
@@ -38,13 +43,14 @@ public class SearchService {
             throw new IllegalStateException("未配置 TAVILY_API_KEY，无法执行 web_search");
         }
         int limit = Math.max(1, Math.min(10, maxResults));
-        TavilyResponse response = client.post()
+        // 超时与代理在 ResearchHttpConfig 统一配置；瞬时失败在这里重试，避免一次网络抖动打死整个 run。
+        TavilyResponse response = HttpRetries.call("Tavily 搜索「" + query + "」", retries, () -> client.post()
                 .uri("/search")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
                 .body(new Request(query, "basic", domains, limit))
                 .retrieve()
                 .body(new ParameterizedTypeReference<>() {
-                });
+                }));
         if (response == null || response.results() == null) {
             return List.of();
         }

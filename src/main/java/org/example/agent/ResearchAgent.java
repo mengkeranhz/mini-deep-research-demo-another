@@ -25,6 +25,7 @@ import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.model.tool.ToolExecutionResult;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.support.ToolCallbacks;
+import org.springframework.ai.tool.execution.DefaultToolExecutionExceptionProcessor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -63,7 +64,10 @@ public final class ResearchAgent {
         this.maxRounds = Math.max(1, maxRounds);
         this.tools = new ResearchTools(context, skills, searchService, fetchService,
                 projectRoot, defaultSearchResults, new FinalGate(chatModel, context));
-        this.toolCallingManager = ToolCallingManager.builder().build();
+        // 工具异常默认会重抛并打死整个 run；改为把错误文本回给模型，让它换关键词/来源自行调整。
+        this.toolCallingManager = ToolCallingManager.builder()
+                .toolExecutionExceptionProcessor(new DefaultToolExecutionExceptionProcessor(false))
+                .build();
         this.toolOptions = ChatOptionsFactories.toolCallingOptions(chatModel, ToolCallbacks.from(tools));
         this.compressor = new ContextCompressor(chatModel, contextTokenThreshold);
     }

@@ -24,5 +24,11 @@ research:
   context-token-threshold: 24000
   tavily-api-key: ${TAVILY_API_KEY:}
   tavily-max-results: 25
+  http:
+    connect-timeout: ${RESEARCH_HTTP_CONNECT_TIMEOUT:10s}
+    response-timeout: ${RESEARCH_HTTP_RESPONSE_TIMEOUT:30s}
+    retries: ${RESEARCH_HTTP_RETRIES:2}
+    proxy-host: ${RESEARCH_HTTP_PROXY_HOST:}
+    proxy-port: ${RESEARCH_HTTP_PROXY_PORT:0}
   project-root: ${user.dir}
   archive-root: ${user.dir}/runs

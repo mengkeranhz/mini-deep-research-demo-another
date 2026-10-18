@@ -34,6 +34,11 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--query='对比 2024 与 2025 �
 | `OPENAI_BASE_URL` | `https://open.bigmodel.cn/api/coding/paas/v4` | OpenAI 通道地址 |
 | `ANTHROPIC_BASE_URL` | `https://open.bigmodel.cn/api/anthropic` | Anthropic 通道地址 |
 | `LLM_MODEL` | 回退 `OPENAI_MODEL`（`glm-5.3`） | 两通道共用模型名 |
+| `RESEARCH_HTTP_PROXY_HOST` / `RESEARCH_HTTP_PROXY_PORT` | 空（直连） | 检索出站（Tavily + fetch_url）HTTP 代理，如 Clash `127.0.0.1` / `7897` |
+| `RESEARCH_HTTP_RETRIES` | `2` | 检索瞬时故障（超时、429、5xx）重试次数 |
+| `RESEARCH_HTTP_RESPONSE_TIMEOUT` | `30s` | 检索出站响应超时 |
+
+检索出站默认直连并显式忽略 JVM 系统代理（IDEA 运行配置会注入本地代理，境外线路不稳时会把 Tavily 拖死）。晚高峰直连境外仍不稳时，设 `RESEARCH_HTTP_PROXY_HOST/PORT` 走代理。LLM 通道流量不走这套配置。
 
 也可以省略 `--query`，程序会提示输入。
 

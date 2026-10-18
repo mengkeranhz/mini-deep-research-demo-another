@@ -1,8 +1,10 @@
 package org.example.tools;
 
+import org.example.config.ResearchProperties;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -12,10 +14,14 @@ import java.net.URI;
 @Service
 public class FetchService {
 
+    private final int retries;
     private final RestClient client;
 
-    public FetchService() {
-        this.client = RestClient.builder().build();
+    public FetchService(ResearchProperties properties, ClientHttpRequestFactory requestFactory) {
+        this.retries = properties.effectiveHttp().retries();
+        this.client = RestClient.builder()
+                .requestFactory(requestFactory)
+                .build();
     }
 
     public String fetch(String url, int maxChars) {
@@ -24,11 +30,11 @@ public class FetchService {
         if (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme)) {
             throw new IllegalArgumentException("只允许 http/https URL");
         }
-        String html = client.get()
+        String html = HttpRetries.call("抓取 " + uri.getHost(), retries, () -> client.get()
                 .uri(uri)
                 .header(HttpHeaders.USER_AGENT, "mini-deep-research-demo-v2/1.0")
                 .retrieve()
-                .body(String.class);
+                .body(String.class));
         if (html == null || html.isBlank()) {
             return "页面内容为空";
         }
