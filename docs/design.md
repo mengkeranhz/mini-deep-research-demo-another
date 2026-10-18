@@ -1,4 +1,4 @@
-# mini-deep-research-demo-v2 设计方案
+# mini-deep-research-demo-another 设计方案
 
 ## 1. 目标与范围
 

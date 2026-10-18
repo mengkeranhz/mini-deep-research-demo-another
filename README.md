@@ -1,4 +1,4 @@
-# mini-deep-research-demo-v2
+# mini-deep-research-demo-another
 
 基于 **Spring AI 2.0 + LangGraph4j 1.9** 的最小 Deep Research Agent Demo。
 

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: mini-deep-research-demo-v2
+    name: mini-deep-research-demo-another
   ai:
     openai:
       api-key: ${LLM_API_KEY:${OPENAI_API_KEY:}}

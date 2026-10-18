@@ -32,7 +32,7 @@ public class FetchService {
         }
         String html = HttpRetries.call("抓取 " + uri.getHost(), retries, () -> client.get()
                 .uri(uri)
-                .header(HttpHeaders.USER_AGENT, "mini-deep-research-demo-v2/1.0")
+                .header(HttpHeaders.USER_AGENT, "mini-deep-research-demo-another/1.0")
                 .retrieve()
                 .body(String.class));
         if (html == null || html.isBlank()) {

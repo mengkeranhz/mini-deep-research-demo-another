@@ -12,7 +12,7 @@
     </parent>
 
     <groupId>org.example</groupId>
-    <artifactId>mini-deep-research-demo-v2</artifactId>
+    <artifactId>mini-deep-research-demo-another</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
