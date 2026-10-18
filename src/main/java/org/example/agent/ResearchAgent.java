@@ -8,6 +8,7 @@ import org.bsc.langgraph4j.action.AsyncCommandAction;
 import org.bsc.langgraph4j.action.AsyncNodeAction;
 import org.bsc.langgraph4j.action.Command;
 import org.bsc.langgraph4j.state.Channels;
+import org.example.config.ChatOptionsFactories;
 import org.example.skill.SkillRegistry;
 import org.example.state.AgentContext;
 import org.example.state.RunArchive;
@@ -20,7 +21,6 @@ import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.model.tool.ToolExecutionResult;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
@@ -64,9 +64,7 @@ public final class ResearchAgent {
         this.tools = new ResearchTools(context, skills, searchService, fetchService,
                 projectRoot, defaultSearchResults, new FinalGate(chatModel, context));
         this.toolCallingManager = ToolCallingManager.builder().build();
-        this.toolOptions = OpenAiChatOptions.builder()
-                .toolCallbacks(ToolCallbacks.from(tools))
-                .build();
+        this.toolOptions = ChatOptionsFactories.toolCallingOptions(chatModel, ToolCallbacks.from(tools));
         this.compressor = new ContextCompressor(chatModel, contextTokenThreshold);
     }
 

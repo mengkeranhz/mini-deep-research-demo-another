@@ -3,17 +3,26 @@ spring:
     name: mini-deep-research-demo-v2
   ai:
     openai:
-      api-key: ${OPENAI_API_KEY:}
-      base-url: ${OPENAI_BASE_URL:https://open.bigmodel.cn/api/paas/v4}
+      api-key: ${LLM_API_KEY:${OPENAI_API_KEY:}}
+      base-url: ${OPENAI_BASE_URL:https://open.bigmodel.cn/api/coding/paas/v4}
       chat:
         options:
-            model: ${OPENAI_MODEL:glm-5.3}
+            model: ${LLM_MODEL:${OPENAI_MODEL:glm-5.3}}
+            temperature: 0.2
+    anthropic:
+      api-key: ${LLM_API_KEY:${OPENAI_API_KEY:}}
+      base-url: ${ANTHROPIC_BASE_URL:https://open.bigmodel.cn/api/anthropic}
+      chat:
+        options:
+            model: ${LLM_MODEL:${OPENAI_MODEL:glm-5.3}}
+            max-tokens: 32768
             temperature: 0.2
 
 research:
-  max-rounds: 24
+  llm-provider: ${LLM_PROVIDER:openai}   # openai | anthropic
+  max-rounds: 25
   context-token-threshold: 24000
   tavily-api-key: ${TAVILY_API_KEY:}
-  tavily-max-results: 5
+  tavily-max-results: 25
   project-root: ${user.dir}
   archive-root: ${user.dir}/runs

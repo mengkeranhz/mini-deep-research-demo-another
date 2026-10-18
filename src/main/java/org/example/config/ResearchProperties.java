@@ -4,6 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "research")
 public record ResearchProperties(
+        String llmProvider,
         int maxRounds,
         int contextTokenThreshold,
         String tavilyApiKey,
