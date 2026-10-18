@@ -28,6 +28,8 @@ public final class ChatOptionsFactories {
                     .model(defaults.getModel())
                     .maxTokens(defaults.getMaxTokens())
                     .temperature(defaults.getTemperature())
+                    .thinking(defaults.getThinking())
+                    .disableParallelToolUse(defaults.getDisableParallelToolUse())
                     .toolCallbacks(callbacks)
                     .build();
         }
@@ -35,10 +37,18 @@ public final class ChatOptionsFactories {
             OpenAiChatOptions defaults = openAiModel.getOptions();
             return OpenAiChatOptions.builder()
                     .model(defaults.getModel())
+                    .maxTokens(defaults.getMaxTokens())
+                    .maxCompletionTokens(defaults.getMaxCompletionTokens())
                     .temperature(defaults.getTemperature())
+                    .reasoningEffort(blankToNull(defaults.getReasoningEffort()))
+                    .parallelToolCalls(defaults.getParallelToolCalls())
                     .toolCallbacks(callbacks)
                     .build();
         }
         return ToolCallingChatOptions.builder().toolCallbacks(callbacks).build();
+    }
+
+    private static String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value.strip();
     }
 }

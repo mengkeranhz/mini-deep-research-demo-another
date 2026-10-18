@@ -169,7 +169,7 @@ Spring Boot CLI
 ## 10. 实现备注
 
 - Spring AI 2.x 各 ChatModel 只读取自家类型的 per-prompt ChatOptions（Anthropic 对通用 `ToolCallingChatOptions` 静默丢弃，OpenAI 断言失败），且不与模型默认 options 合并；因此 `ChatOptionsFactories` 按选中的模型构建 `AnthropicChatOptions` / `OpenAiChatOptions` 并复制默认的 model/maxTokens/temperature 再挂工具回调。OpenAI / Anthropic 双协议由官方 starter 各自自动装配 `ChatModel`，`ChatModelSelectorConfig` 按 `research.llm-provider`（环境变量 `LLM_PROVIDER`）用 `@Primary` 二选一，业务代码只注入通用 `ChatModel` 接口。
+- GLM-5.3 默认使用 `reasoning_effort=max`。工具路由是高频小决策，默认复制 `reasoning_effort=low`、禁用并行工具调用，并通过 `ChatModelCalls` 将流式 chunks 聚合成阻塞 `ChatResponse`，降低长输出被网关/客户端超时打断的概率。
 - LangGraph4j 默认使用 JDK 序列化克隆状态，而 Spring AI Message 不是 `Serializable`；本 Demo 不启用 checkpoint，使用浅拷贝 `StateSerializer` 隔离节点输出。
 - 图递归上限设为业务轮次上限的 3 倍，容纳 `model -> tools -> model` 一轮两节点和纯文本纠偏轮。
 - 工具名显式声明为 snake_case，避免 Java 方法名 camelCase 与提示词/模型输出不一致。
-

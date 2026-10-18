@@ -12,6 +12,7 @@ public final class PromptTemplates {
             6. 事实账本是最终结算依据；摘要、旧草稿与账本冲突时，一律以账本为准。
             7. 信息足够时立即停止检索，并通过 final_answer 提交完整答案；不要为了“更完整”重复搜索。
             8. 答案中的关键数据、来源和确定性断言必须能映射到事实账本。
+            9. 执行阶段每轮只选择一个最小必要动作；信息已足够时不要再检索。
             """;
 
     public static String systemPrompt(String skillCatalog) {

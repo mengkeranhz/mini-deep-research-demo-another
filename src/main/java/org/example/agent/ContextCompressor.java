@@ -31,7 +31,7 @@ public final class ContextCompressor {
         String transcript = transcript(messages);
         String summary;
         try {
-            summary = chatModel.call(new Prompt(List.of(
+            summary = ChatModelCalls.call(chatModel, new Prompt(List.of(
                     new SystemMessage("你是研究执行进度摘要器。保留未完成任务、已检索对象、关键结论、冲突和用户约束，删除重复过程细节。直接输出摘要。"),
                     new UserMessage(transcript)
             ))).getResult().getOutput().getText();
@@ -60,7 +60,8 @@ public final class ContextCompressor {
         if (context.bestAnswer() != null && !context.bestAnswer().isBlank()) {
             rebuilt.append("\n\n【旧答案草稿，仅供结构参考；与账本冲突时以账本为准】\n").append(context.bestAnswer());
         }
-        rebuilt.append("\n\n请基于以上进度继续完成任务；后续数据一律以事实账本为准。");
+        rebuilt.append("\n\n请基于以上进度继续完成任务；后续数据一律以事实账本为准。")
+                .append("\n压缩恢复后先完成最小下一步，一次只调用一个工具，不要直接撰写长终稿。");
 
         context.archive().write("context-compression.md", "# 上下文压缩\n\n"
                 + "- 触发前 inputTokens 阈值: " + threshold + "\n\n## 摘要\n\n" + summary + "\n");

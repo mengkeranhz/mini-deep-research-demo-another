@@ -1,6 +1,7 @@
 package org.example.tools;
 
 import org.example.agent.PromptTemplates;
+import org.example.agent.ChatModelCalls;
 import org.example.state.AgentContext;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -59,7 +60,7 @@ public final class FinalGate {
         );
         String verdict;
         try {
-            verdict = chatModel.call(new Prompt(messages)).getResult().getOutput().getText();
+            verdict = ChatModelCalls.call(chatModel, new Prompt(messages)).getResult().getOutput().getText();
         } catch (Exception e) {
             context.setFinalAccepted(false);
             return "最终校验器调用失败（这不是答案内容 FAIL）：" + e.getMessage()

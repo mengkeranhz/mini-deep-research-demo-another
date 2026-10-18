@@ -5,31 +5,35 @@ spring:
     openai:
       api-key: ${LLM_API_KEY:${OPENAI_API_KEY:}}
       base-url: ${OPENAI_BASE_URL:https://open.bigmodel.cn/api/coding/paas/v4}
-      # Deep research / tool-calling completions can easily exceed the Spring AI
-      # OpenAI client's 60s default call timeout.
-      timeout: ${LLM_TIMEOUT:600s}
-      max-retries: ${LLM_MAX_RETRIES:3}
+      # GLM tool-routing calls default to max reasoning; low prevents multi-minute
+      # hidden reasoning before the first useful action. Keep streaming enabled below.
+      timeout: ${LLM_TIMEOUT:900s}
+      max-retries: ${LLM_MAX_RETRIES:1}
       chat:
         options:
             model: ${LLM_MODEL:${OPENAI_MODEL:glm-5.3}}
+            max-tokens: ${LLM_MAX_TOKENS:32768}
             temperature: 0.2
+            reasoning-effort: ${LLM_REASONING_EFFORT:low}
+            parallel-tool-calls: false
     anthropic:
       api-key: ${LLM_API_KEY:${OPENAI_API_KEY:}}
       base-url: ${ANTHROPIC_BASE_URL:https://open.bigmodel.cn/api/anthropic}
-      timeout: ${LLM_TIMEOUT:600s}
-      max-retries: ${LLM_MAX_RETRIES:3}
+      timeout: ${LLM_TIMEOUT:900s}
+      max-retries: ${LLM_MAX_RETRIES:1}
       chat:
         options:
             model: ${LLM_MODEL:${OPENAI_MODEL:glm-5.3}}
             max-tokens: 32768
             temperature: 0.2
+            disable-parallel-tool-use: true
 
 research:
   llm-provider: ${LLM_PROVIDER:openai}   # openai | anthropic
   max-rounds: 25
-  context-token-threshold: 24000
+  context-token-threshold: ${RESEARCH_CONTEXT_TOKEN_THRESHOLD:24000}
   tavily-api-key: ${TAVILY_API_KEY:}
-  tavily-max-results: 25
+  tavily-max-results: ${TAVILY_MAX_RESULTS:5}
   http:
     connect-timeout: ${RESEARCH_HTTP_CONNECT_TIMEOUT:10s}
     response-timeout: ${RESEARCH_HTTP_RESPONSE_TIMEOUT:30s}

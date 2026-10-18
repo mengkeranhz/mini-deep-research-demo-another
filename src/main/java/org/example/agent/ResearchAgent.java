@@ -148,7 +148,7 @@ public final class ResearchAgent {
         List<Message> callMessages = new ArrayList<>(messages);
         callMessages.add(snapshot);
         Prompt prompt = new Prompt(callMessages, toolOptions);
-        ChatResponse response = chatModel.call(prompt);
+        ChatResponse response = ChatModelCalls.call(chatModel, prompt);
         AssistantMessage output = response.getResult().getOutput();
         String text = output.getText() == null ? "" : output.getText();
         List<Message> nextMessages = new ArrayList<>(messages);
