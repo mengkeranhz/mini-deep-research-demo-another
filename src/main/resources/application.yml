@@ -5,6 +5,10 @@ spring:
     openai:
       api-key: ${LLM_API_KEY:${OPENAI_API_KEY:}}
       base-url: ${OPENAI_BASE_URL:https://open.bigmodel.cn/api/coding/paas/v4}
+      # Deep research / tool-calling completions can easily exceed the Spring AI
+      # OpenAI client's 60s default call timeout.
+      timeout: ${LLM_TIMEOUT:600s}
+      max-retries: ${LLM_MAX_RETRIES:3}
       chat:
         options:
             model: ${LLM_MODEL:${OPENAI_MODEL:glm-5.3}}
@@ -12,6 +16,8 @@ spring:
     anthropic:
       api-key: ${LLM_API_KEY:${OPENAI_API_KEY:}}
       base-url: ${ANTHROPIC_BASE_URL:https://open.bigmodel.cn/api/anthropic}
+      timeout: ${LLM_TIMEOUT:600s}
+      max-retries: ${LLM_MAX_RETRIES:3}
       chat:
         options:
             model: ${LLM_MODEL:${OPENAI_MODEL:glm-5.3}}
